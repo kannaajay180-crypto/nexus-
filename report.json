@@ -1,0 +1,193 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-06T10:46:03.875Z",
+  "summary": "The diff adds a new Motoko backend actor with user profiles and basic travel-trip storage, plus a React app shell with Internet Identity login, routing, theming, and initial pages. Several required modules are still placeholders on the frontend, and many backend capabilities (mess menu CRUD, email archive, join-request workflow, timetable features, docs, deletion controls, audit log persistence) are not evidenced in the provided diff summary.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "RBAC with at least Student and Admin roles persisted in backend; enforce role checks for all admin-only write operations; bootstrap first Admin.",
+      "reason": "Backend/frontend evidence shows a generic role string (e.g., 'user') and admin checks exist, but the required explicit roles (Student/Admin) and broad enforcement across all admin-only write operations cannot be confirmed from the truncated backend; also no clear persisted profile fields for principal are shown (keyed by Principal map, but type lacks principal).",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/components/auth/ProfileSetupDialog.tsx",
+        "frontend/src/hooks/useActor.ts",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Live Mess Menu backend CRUD keyed by date and frontend date switching with admin-only add/edit UI.",
+      "reason": "Mess menu page is a placeholder and no backend methods/types for mess menus are shown in the diff summary.",
+      "evidence": [
+        "frontend/src/pages/MessMenuPage.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Email Summarizer must store summarized items into a searchable archive with spam hide/show and deadline extraction; deterministic heuristics implemented in-app.",
+      "reason": "Frontend shows a single-page analysis result with heuristic extraction, but there is no evidence of saving summaries to a backend archive, listing an archive, full-text search, or spam hide/show controls tied to stored items.",
+      "evidence": [
+        "frontend/src/pages/EmailSummarizerPage.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "User-managed interests and relevance-ranked email archive with explainable matched keywords in UI.",
+      "reason": "UserProfile includes interests, but there is no evidence of settings UI to manage interests, nor any archive sorting/ranking UI/logic.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Travel Pool system with browsing/matching by destination and time window, join-request workflow (request + owner accept/decline), and cost-splitting calculator.",
+      "reason": "Backend shows createTrip, getAllTrips, getTripsByDestination, and joinTrip that directly decrements seats (no request/approval workflow). No evidence of time-window filtering or cost-splitting calculator UI/endpoint.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/components/travel/TripFormDialog.tsx"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "requirement": "Emergency contacts stored per user; share trip details view includes contact method; report issue creates safety report for admin review.",
+      "reason": "UserProfile includes optional emergencyContact, and there are placeholder admin safety report pages, but no evidence of UI for adding/editing emergency contact, no trip share-details section, and no backend/API for submitting/viewing safety reports.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/pages/AdminSafetyReportsPage.tsx",
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "requirement": "Post-trip participant ratings with aggregation on profiles and backend enforcement against non-participants/duplicates.",
+      "reason": "No rating types, storage, or methods are evidenced in backend or frontend.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "requirement": "Carbon footprint tracking for trips with UI display of total/per-passenger CO2 and configurable emission factors.",
+      "reason": "Emission factors and calculation utility exist, and trip form includes distance/vehicle type, but there is no evidence that the UI displays calculated CO2 totals/per-passenger in trip list/details.",
+      "evidence": [
+        "frontend/src/lib/travel/emissions.ts",
+        "frontend/src/components/travel/TripFormDialog.tsx",
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "requirement": "Polling-based refresh with ability to disable/reduce polling when tab not visible or via a basic toggle.",
+      "reason": "Trips query uses a fixed refetchInterval (20s), but there is no evidence of visibility-based throttling or a user toggle to disable/reduce polling.",
+      "evidence": [
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "requirement": "Live Timetable module with personal schedule CRUD and admin update notices surfaced to affected users.",
+      "reason": "Routes/pages exist for timetable and admin notices, but admin notices page is explicitly a placeholder and there is no evidence of timetable CRUD or backend storage/APIs.",
+      "evidence": [
+        "frontend/src/pages/AdminNoticesPage.tsx",
+        "frontend/src/App.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "requirement": "Timetable helpers: multi-semester, exams/countdowns, free-period finder, conflict detection, reminders, and ICS export.",
+      "reason": "No evidence of these features in frontend or backend in the diff summary.",
+      "evidence": [
+        "frontend/src/App.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "requirement": "Office hours fields and room occupancy status with manual updates and role-controlled writes.",
+      "reason": "No evidence of office hours or occupancy data models/methods/UI.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "requirement": "Developer-facing documentation of all backend endpoints with auth rules and examples.",
+      "reason": "No README/docs additions are shown in the diff summary.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "requirement": "Responsible data handling: consent text, delete-my-data controls, profile deletion where safe, sensitive fields not public by default, and persistent audit logging viewable by admins.",
+      "reason": "Privacy page exists and trip creation includes consent text, but there is no evidence of deletion endpoints/UI, no evidence that emergency contacts are protected beyond general profile access rules, and the admin audit log page is a placeholder with no backend audit log storage/APIs shown.",
+      "evidence": [
+        "frontend/src/pages/PrivacyPage.tsx",
+        "frontend/src/components/travel/TripFormDialog.tsx",
+        "frontend/src/pages/AdminAuditLogPage.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "requirement": "Generated static visual assets (logo + module icons) exist under frontend/public/assets/generated and are used in header and module navigation/cards.",
+      "reason": "Frontend references the expected asset paths in pages, but the diff summary does not include the actual image files under frontend/public/assets/generated (they may be among omitted added files, but it is not evidenced here).",
+      "evidence": [
+        "frontend/src/pages/LoginPage.tsx",
+        "frontend/src/pages/MessMenuPage.tsx",
+        "frontend/src/pages/EmailSummarizerPage.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Secret URL parameter-based admin initialization token ('caffeineAdminToken') used to initialize access control.",
+      "reason": "The BuildRequest allows bootstrapping the first admin, but does not specify using a secret URL parameter token; this is an additional mechanism not explicitly requested.",
+      "evidence": [
+        "frontend/src/hooks/useActor.ts"
+      ]
+    }
+  ],
+  "confidence": 0.66,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/auth/AccessDeniedScreen.tsx",
+    "frontend/src/components/auth/LoginButton.tsx",
+    "frontend/src/components/auth/ProfileSetupDialog.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/components/travel/TripFormDialog.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/lib/travel/emissions.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/AdminAuditLogPage.tsx",
+    "frontend/src/pages/AdminNoticesPage.tsx",
+    "frontend/src/pages/AdminSafetyReportsPage.tsx",
+    "frontend/src/pages/EmailSummarizerPage.tsx",
+    "frontend/src/pages/LoginPage.tsx",
+    "frontend/src/pages/MessMenuPage.tsx",
+    "frontend/src/pages/PrivacyPage.tsx",
+    "frontend/src/pages/SettingsPage.tsx",
+    "frontend/src/pages/TimetablePage.tsx",
+    "frontend/src/pages/TravelPoolPage.tsx",
+    "frontend/src/pages/TravelTripDetailsPage.tsx",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}
