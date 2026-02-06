@@ -1,0 +1,354 @@
+{
+  "kind": "build_request",
+  "title": "Campus Companion: Mess Menu, Email Summaries, Carpool Pooling, Timetable, and Role-Based Login (Responsive Web App)",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Implement secure authentication using Internet Identity and add role-based access control (RBAC) with at least: Student and Admin roles. Persist user profiles (principal, display name, role) in the Motoko backend and enforce role checks for all admin-only write operations.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Secure user login with role management"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A user can sign in/out with Internet Identity from the frontend.",
+        "Backend stores a user profile keyed by caller principal and returns the caller’s role.",
+        "Admin-only endpoints reject non-admin callers with a clear error.",
+        "At least one way exists to bootstrap the first Admin (e.g., hardcoded allowlist in config or first-login claim flow documented)."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Create a responsive, mobile-and-desktop-friendly UI shell with navigation to the four main modules: Live Mess Menu, Email Summarizer, Travel Pool Cab, and Live Timetable. Ensure layouts adapt cleanly to small screens and larger desktop widths.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "create a app both can be used in destop and mobile"
+        ]
+      },
+      "acceptanceCriteria": [
+        "App is usable on common mobile widths (e.g., 360px) and desktop widths (>= 1024px) without broken layout.",
+        "Navigation is accessible on both mobile (collapsible) and desktop (persistent).",
+        "Each module has its own route/view with a clear title and empty-state messaging in English."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Build the Live Mess Menu feature: store and display dynamic daily meal entries (e.g., breakfast/lunch/snacks/dinner) by date. Students can view the current day and upcoming days; Admins can create/update menus for specific dates.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "live mess menu (Dynamic daily meal display)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend supports CRUD for mess menus keyed by date.",
+        "Frontend shows today’s menu by default with ability to switch date.",
+        "Admins can add/edit a menu for a selected date from the UI; non-admins cannot see edit controls.",
+        "Menus persist across reloads."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Build the Email Summarizer module as an on-platform (no external AI calls) assistant that accepts pasted email text (and optional subject/date) and produces: (1) a one-sentence action item/notice summary, (2) category label (academic/events/urgent/other), (3) priority score, (4) sentiment label (positive/neutral/negative), and (5) extracted deadlines (dates/times when detectable). Store summarized items into a searchable archive.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "an ai/ml based mail summarizer( AI-assisted parsing of lengthy college-wide emails ,Extract and convert to one-sentence action items or notices,Consider: NLP for categorization (academic/events/urgent), priority scoring, sentiment analysis, personalized relevance ranking, smart spam filtering, searchable archives, deadline extraction)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can paste an email and receive a computed summary, category, priority, sentiment, and any extracted deadlines.",
+        "Summaries are generated using deterministic heuristics / lightweight NLP implemented within the app (no third-party LLM/API).",
+        "Archive view lists saved summaries and supports full-text search over subject/body/summary.",
+        "Spam filtering marks an item as “likely spam” using simple rules (e.g., repeated promotions/keywords) and allows users to hide/show spam-marked items.",
+        "Deadline extraction detects at least common patterns (e.g., \"by 12 Feb\", \"Feb 12\", \"tomorrow\", \"5 PM\") and stores extracted values when found."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Add personalized relevance ranking for the Email Summarizer archive using user-managed interests (e.g., keywords/tags like course codes, clubs, locations). Rank and filter archived summaries by relevance to the signed-in user.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "personalized relevance ranking"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can manage a simple list of interest keywords in Settings/Profile.",
+        "Archive can be sorted by “Relevance” which boosts items containing interest keywords in subject/body/summary.",
+        "Relevance scoring is explainable in the UI (e.g., show matched keywords)."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Build the Travel Sharing / Pool Cab system: allow students to create trips with destination (e.g., Chandigarh/Delhi/etc.), pickup point (text), departure date/time, available seats, and notes. Provide browsing and matching by destination and time window, and allow users to request/join trips. Include a cost-splitting calculator based on total cost and passenger count.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "travel sharing pool cab system( Match students traveling to common destinations (Chandigarh/Delhi/etc.), List departure times and find co-passengers,Consider: cost-splitting calculators"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Users can create a trip and see it listed for other users.",
+        "Users can filter trips by destination and date/time window and view departure times.",
+        "Users can request to join a trip; trip owner can accept/decline; seat counts update accordingly.",
+        "Cost split calculator returns per-person estimates given total cost and passenger count."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add safety features to Travel Sharing: support emergency contacts per user and a simple “Share trip details” view that displays trip info and the trip owner’s chosen contact method. Provide a “Report issue” action that records a safety report tied to a trip for admin review.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "safety features, emergency contacts"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can add/edit emergency contact information in their profile (stored in backend).",
+        "Trip details page includes a section to view/share essential trip info (destination, time, participants list per privacy settings).",
+        "A user can submit a safety report against a trip; admins can view a list of reports."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Implement driver/passenger ratings for completed trips: allow participants to rate each other after the trip time has passed, and show aggregate rating on user profiles used in Travel Sharing.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "driver/passenger ratings"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After a trip’s departure time has passed, participants can submit a 1–5 rating (and optional comment).",
+        "User profile displays average rating and rating count.",
+        "Backend prevents rating by non-participants and prevents duplicate ratings for the same trip+reviewer+reviewee."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Provide an approximation-based carbon footprint tracking for trips (no external maps): allow trip creators to enter an estimated distance (km) and vehicle type choice (e.g., small car/sedan/SUV). Compute and display an estimated CO₂ per passenger and total, based on fixed emission factors configured in-app.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "carbon footprint tracking"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Trip form includes optional distance (km) and vehicle type.",
+        "UI displays estimated total CO₂ and per-passenger CO₂ when distance is provided.",
+        "Emission factors are documented and configurable in code (no external API dependency)."
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Implement “real-time” trip list refresh via polling (not WebSockets): periodically refresh available trips and join request statuses on the frontend using React Query polling intervals.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "real-time tracking"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Trips list refreshes automatically on an interval (e.g., every 15–30 seconds) without user action.",
+        "Polling can be disabled/reduced when the tab is not visible or user is on metered mode (basic toggle is acceptable)."
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Build the Live Timetable module: allow users to maintain a customizable personal schedule (courses/events with day/time/room/professor). Admins can publish real-time updates for cancellations and room changes that appear in affected users’ views.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Live Timetable(Customizable personal schedule,Real-time updates for class cancellations and room changes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can create/edit/delete timetable entries in their personal schedule.",
+        "Admin can create an “update notice” (cancellation/room change) linked to a course/identifier and time window.",
+        "User timetable view surfaces relevant active notices prominently.",
+        "Data persists across reloads."
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Add timetable helper features: multi-semester views, exam countdowns, free-period finder, conflict detection, smart reminders, and calendar export (ICS download).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Consider: multi-semester views, exam countdowns, free period finders, conflict detection, calendar exports, professor office hours, classroom occupancy status, smart reminder"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can assign timetable entries to a semester and switch between semesters.",
+        "User can add exams with date/time and see countdowns.",
+        "Free-period finder identifies open slots for a selected day/week based on current schedule.",
+        "Conflict detection warns on overlapping entries when creating/editing entries.",
+        "User can export a semester schedule to an ICS file from the UI.",
+        "Smart reminders can be configured (e.g., 10/30 minutes before) and are shown in-app (no push notifications)."
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Add professor office hours and classroom occupancy status as optional fields/features in Timetable using manual data entry (no external sensors): users/admins can record office hours and mark rooms as “occupied/free” with a last-updated timestamp.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "professor office hours, classroom occupancy status"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Timetable entries optionally store office hours information and display it in the UI.",
+        "Room occupancy can be manually updated and shows last updated time.",
+        "Non-admin users can view occupancy status; write access is role-controlled (define who can update)."
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Document all backend API endpoints (candid methods) and their authorization rules in a developer-facing document (README or /docs) and include brief examples of request/response shapes for each major module.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "well documented API endpoints"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Documentation lists all public canister methods grouped by feature area (auth/users, mess menu, email archive, travel, timetable).",
+        "Each method includes: purpose, params, return type/shape, and who is allowed to call it (Student/Admin).",
+        "Docs include at least one example for creating and reading data for each module."
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Implement responsible data handling practices: minimize stored personally identifiable information, provide clear user consent text where user content is stored (emails, trip details), include data retention controls (delete my data) and basic audit logging for admin actions.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Implement responsible data handling practice"
+        ]
+      },
+      "acceptanceCriteria": [
+        "App includes a short Privacy/Responsible Data Handling page in English describing what is stored and why.",
+        "Users can delete their own stored content (email archive items, timetable entries, trips they own where applicable) and request deletion of their profile data where safe.",
+        "Backend stores only necessary fields; sensitive fields (e.g., emergency contacts) are not publicly readable by default.",
+        "Admin actions that modify shared data (mess menu, notices, reports) are recorded in a simple audit log viewable by admins."
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Apply a coherent, distinctive visual theme across the app (colors, typography, spacing, and component styling) that works well for a campus utility product and is consistently used in all main views (avoid a blue/purple default look).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A defined palette and typography scale is applied consistently across navigation, headers, cards, and forms.",
+        "All four modules share a consistent layout system (page header + content sections).",
+        "Theme remains accessible with sufficient contrast for text and interactive elements."
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "text": "Add and render generated static visual assets for the app (logo and module icons) from frontend/public/assets/generated and use them in the header and module navigation.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Generated images exist under frontend/public/assets/generated and are referenced directly by the frontend (no backend image serving).",
+        "App header shows the logo.",
+        "Navigation/cards for the four modules display their icons."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must be implemented as a single Motoko actor in backend/main.mo (no additional backend services).",
+    "Do not edit files under frontend/src/components/ui or any immutable paths listed in SYSTEM_CONTEXT; compose those components instead.",
+    "Do not use external AI/LLM services or third-party authentication providers; use only Internet Identity for auth.",
+    "No WebSockets/real-time sockets; implement live updates using polling/refresh patterns.",
+    "Use English for all user-facing text."
+  ],
+  "nonGoals": [
+    "Integrating with real institutional email providers (IMAP/Gmail/Outlook) or automatically fetching emails.",
+    "Map/GPS-based route optimization or live location tracking via device geolocation.",
+    "True real-time push notifications (browser/mobile).",
+    "Hosting the code on an external Git provider as part of the app build (the codebase should be compatible with being pushed to a Git repo, but hosting is out of scope)."
+  ],
+  "imageRequirements": {
+    "required": [
+      "Campus companion app logo, flat modern mark (app-logo.dim_512x512.png)",
+      "Mess menu icon, simple minimal illustration (icon-mess.dim_256x256.png)",
+      "Email summarizer icon, minimal envelope/document motif (icon-mail.dim_256x256.png)",
+      "Carpool/travel icon, minimal car with passengers motif (icon-carpool.dim_256x256.png)",
+      "Timetable icon, minimal calendar/clock motif (icon-timetable.dim_256x256.png)"
+    ],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [
+      "Build a responsive campus companion web app for desktop and mobile with mess menu, email summarization, carpool matching, and timetable features.",
+      "Include secure login with role-based access and responsible data handling."
+    ],
+    "goalsToRemove": [],
+    "preferencesToAdd": [
+      "Use English for all user-facing UI text."
+    ],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}
