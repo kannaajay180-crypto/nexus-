@@ -1,0 +1,348 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-implement-secure-authentication-using-internet-identity-and-add-role-based-access-control-rbac-with-at-least-student-and-admin-roles-persist-user-profiles-principal-display-name-role-in-the-motoko-backend-and-enforce-role-checks-for-all-admin-only-write-operations",
+      "featureTitle": "Implement secure authentication using Internet Identity and add role-based access control (RBAC) with at least: Student and Admin roles. Persist user profiles (principal, display name, role) in the Motoko backend and enforce role checks for all admin-only write operations.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/auth/AccessDeniedScreen.tsx",
+        "frontend/src/components/auth/LoginButton.tsx",
+        "frontend/src/components/auth/ProfileSetupDialog.tsx",
+        "frontend/src/main.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-responsive-mobile-and-desktop-friendly-ui-shell-with-navigation-to-the-four-main-modules-live-mess-menu-email-summarizer-travel-pool-cab-and-live-timetable-ensure-layouts-adapt-cleanly-to-small-screens-and-larger-desktop-widths",
+      "featureTitle": "Create a responsive, mobile-and-desktop-friendly UI shell with navigation to the four main modules: Live Mess Menu, Email Summarizer, Travel Pool Cab, and Live Timetable. Ensure layouts adapt cleanly to small screens and larger desktop widths.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/pages/EmailSummarizerPage.tsx",
+        "frontend/src/pages/MessMenuPage.tsx",
+        "frontend/src/pages/TimetablePage.tsx",
+        "frontend/src/pages/TravelPoolPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-live-mess-menu-feature-store-and-display-dynamic-daily-meal-entries-e-g-breakfast-lunch-snacks-dinner-by-date-students-can-view-the-current-day-and-upcoming-days-admins-can-create-update-menus-for-specific-dates",
+      "featureTitle": "Build the Live Mess Menu feature: store and display dynamic daily meal entries (e.g., breakfast/lunch/snacks/dinner) by date. Students can view the current day and upcoming days; Admins can create/update menus for specific dates.",
+      "files": [
+        "frontend/src/pages/MessMenuPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-email-summarizer-module-as-an-on-platform-no-external-ai-calls-assistant-that-accepts-pasted-email-text-and-optional-subject-date-and-produces-1-a-one-sentence-action-item-notice-summary-2-category-label-academic-events-urgent-other-3-priority-score-4-sentiment-label-positive-neutral-negative-and-5-extracted-deadlines-dates-times-when-detectable-store-summarized-items-into-a-searchable-archive",
+      "featureTitle": "Build the Email Summarizer module as an on-platform (no external AI calls) assistant that accepts pasted email text (and optional subject/date) and produces: (1) a one-sentence action item/notice summary, (2) category label (academic/events/urgent/other), (3) priority score, (4) sentiment label (positive/neutral/negative), and (5) extracted deadlines (dates/times when detectable). Store summarized items into a searchable archive.",
+      "files": [
+        "frontend/src/pages/EmailSummarizerPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-personalized-relevance-ranking-for-the-email-summarizer-archive-using-user-managed-interests-e-g-keywords-tags-like-course-codes-clubs-locations-rank-and-filter-archived-summaries-by-relevance-to-the-signed-in-user",
+      "featureTitle": "Add personalized relevance ranking for the Email Summarizer archive using user-managed interests (e.g., keywords/tags like course codes, clubs, locations). Rank and filter archived summaries by relevance to the signed-in user.",
+      "files": [
+        "frontend/src/pages/SettingsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-travel-sharing-pool-cab-system-allow-students-to-create-trips-with-destination-e-g-chandigarh-delhi-etc-pickup-point-text-departure-date-time-available-seats-and-notes-provide-browsing-and-matching-by-destination-and-time-window-and-allow-users-to-request-join-trips-include-a-cost-splitting-calculator-based-on-total-cost-and-passenger-count",
+      "featureTitle": "Build the Travel Sharing / Pool Cab system: allow students to create trips with destination (e.g., Chandigarh/Delhi/etc.), pickup point (text), departure date/time, available seats, and notes. Provide browsing and matching by destination and time window, and allow users to request/join trips. Include a cost-splitting calculator based on total cost and passenger count.",
+      "files": [
+        "frontend/src/components/travel/TripFormDialog.tsx",
+        "frontend/src/pages/TravelPoolPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-safety-features-to-travel-sharing-support-emergency-contacts-per-user-and-a-simple-share-trip-details-view-that-displays-trip-info-and-the-trip-owner-s-chosen-contact-method-provide-a-report-issue-action-that-records-a-safety-report-tied-to-a-trip-for-admin-review",
+      "featureTitle": "Add safety features to Travel Sharing: support emergency contacts per user and a simple “Share trip details” view that displays trip info and the trip owner’s chosen contact method. Provide a “Report issue” action that records a safety report tied to a trip for admin review.",
+      "files": [
+        "frontend/src/pages/AdminSafetyReportsPage.tsx",
+        "frontend/src/pages/TravelTripDetailsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-driver-passenger-ratings-for-completed-trips-allow-participants-to-rate-each-other-after-the-trip-time-has-passed-and-show-aggregate-rating-on-user-profiles-used-in-travel-sharing",
+      "featureTitle": "Implement driver/passenger ratings for completed trips: allow participants to rate each other after the trip time has passed, and show aggregate rating on user profiles used in Travel Sharing.",
+      "files": [
+        "frontend/src/pages/TravelTripDetailsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-provide-an-approximation-based-carbon-footprint-tracking-for-trips-no-external-maps-allow-trip-creators-to-enter-an-estimated-distance-km-and-vehicle-type-choice-e-g-small-car-sedan-suv-compute-and-display-an-estimated-co-per-passenger-and-total-based-on-fixed-emission-factors-configured-in-app",
+      "featureTitle": "Provide an approximation-based carbon footprint tracking for trips (no external maps): allow trip creators to enter an estimated distance (km) and vehicle type choice (e.g., small car/sedan/SUV). Compute and display an estimated CO₂ per passenger and total, based on fixed emission factors configured in-app.",
+      "files": [
+        "frontend/src/components/travel/TripFormDialog.tsx",
+        "frontend/src/lib/travel/emissions.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-real-time-trip-list-refresh-via-polling-not-websockets-periodically-refresh-available-trips-and-join-request-statuses-on-the-frontend-using-react-query-polling-intervals",
+      "featureTitle": "Implement “real-time” trip list refresh via polling (not WebSockets): periodically refresh available trips and join request statuses on the frontend using React Query polling intervals.",
+      "files": [
+        "frontend/src/pages/TravelPoolPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-live-timetable-module-allow-users-to-maintain-a-customizable-personal-schedule-courses-events-with-day-time-room-professor-admins-can-publish-real-time-updates-for-cancellations-and-room-changes-that-appear-in-affected-users-views",
+      "featureTitle": "Build the Live Timetable module: allow users to maintain a customizable personal schedule (courses/events with day/time/room/professor). Admins can publish real-time updates for cancellations and room changes that appear in affected users’ views.",
+      "files": [
+        "frontend/src/pages/AdminNoticesPage.tsx",
+        "frontend/src/pages/TimetablePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-timetable-helper-features-multi-semester-views-exam-countdowns-free-period-finder-conflict-detection-smart-reminders-and-calendar-export-ics-download",
+      "featureTitle": "Add timetable helper features: multi-semester views, exam countdowns, free-period finder, conflict detection, smart reminders, and calendar export (ICS download).",
+      "files": [
+        "frontend/src/pages/TimetablePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-12"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-professor-office-hours-and-classroom-occupancy-status-as-optional-fields-features-in-timetable-using-manual-data-entry-no-external-sensors-users-admins-can-record-office-hours-and-mark-rooms-as-occupied-free-with-a-last-updated-timestamp",
+      "featureTitle": "Add professor office hours and classroom occupancy status as optional fields/features in Timetable using manual data entry (no external sensors): users/admins can record office hours and mark rooms as “occupied/free” with a last-updated timestamp.",
+      "files": [
+        "frontend/src/pages/TimetablePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-13"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-document-all-backend-api-endpoints-candid-methods-and-their-authorization-rules-in-a-developer-facing-document-readme-or-docs-and-include-brief-examples-of-request-response-shapes-for-each-major-module",
+      "featureTitle": "Document all backend API endpoints (candid methods) and their authorization rules in a developer-facing document (README or /docs) and include brief examples of request/response shapes for each major module.",
+      "files": [],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-14"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-responsible-data-handling-practices-minimize-stored-personally-identifiable-information-provide-clear-user-consent-text-where-user-content-is-stored-emails-trip-details-include-data-retention-controls-delete-my-data-and-basic-audit-logging-for-admin-actions",
+      "featureTitle": "Implement responsible data handling practices: minimize stored personally identifiable information, provide clear user consent text where user content is stored (emails, trip details), include data retention controls (delete my data) and basic audit logging for admin actions.",
+      "files": [
+        "frontend/src/components/travel/TripFormDialog.tsx",
+        "frontend/src/pages/AdminAuditLogPage.tsx",
+        "frontend/src/pages/PrivacyPage.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-15"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-apply-a-coherent-distinctive-visual-theme-across-the-app-colors-typography-spacing-and-component-styling-that-works-well-for-a-campus-utility-product-and-is-consistently-used-in-all-main-views-avoid-a-blue-purple-default-look",
+      "featureTitle": "Apply a coherent, distinctive visual theme across the app (colors, typography, spacing, and component styling) that works well for a campus utility product and is consistently used in all main views (avoid a blue/purple default look).",
+      "files": [
+        "frontend/index.css",
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-16"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-and-render-generated-static-visual-assets-for-the-app-logo-and-module-icons-from-frontend-public-assets-generated-and-use-them-in-the-header-and-module-navigation",
+      "featureTitle": "Add and render generated static visual assets for the app (logo and module icons) from frontend/public/assets/generated and use them in the header and module navigation.",
+      "files": [
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/pages/EmailSummarizerPage.tsx",
+        "frontend/src/pages/MessMenuPage.tsx",
+        "frontend/src/pages/TimetablePage.tsx",
+        "frontend/src/pages/TravelPoolPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-17"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
