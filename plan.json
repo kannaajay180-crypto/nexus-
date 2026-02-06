@@ -1,0 +1,748 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Campus Companion (Responsive RWA): Auth/RBAC, Mess Menu, Email Summaries, Carpool, Timetable",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Add Internet Identity sign-in/out UI and role-aware UI gating with profile setup (name/role) and admin bootstrap affordances.",
+      "acceptanceCriteria": [
+        "A user can sign in/out with Internet Identity from the frontend.",
+        "Backend stores a user profile keyed by caller principal and returns the caller’s role.",
+        "Admin-only endpoints reject non-admin callers with a clear error.",
+        "At least one way exists to bootstrap the first Admin (e.g., hardcoded allowlist in config or first-login claim flow documented)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/main.tsx",
+          "operation": "modify",
+          "description": "Ensure React Query cache is cleared on logout and app shell is wrapped for auth-aware routing/guards (Internet Identity + actor). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Create the top-level app with authenticated/unauthenticated states, route-level access guards, and global error handling for authorization failures from the backend. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/auth/LoginButton.tsx",
+          "operation": "create",
+          "description": "Implement sign in/out button using the selected authorization component guidance (useInternetIdentity + queryClient.clear on logout). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/auth/ProfileSetupDialog.tsx",
+          "operation": "create",
+          "description": "Implement first-login profile setup flow (ask display name; show consent copy); call getCallerUserProfile/saveCallerUserProfile and prevent modal flash per selected authorization component guidance. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useCurrentUser.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for current user role/profile (getCallerUserRole/getCallerUserProfile) and helpers like isAdmin; keep them actor-aware to avoid loading flashes. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/auth/AccessDeniedScreen.tsx",
+          "operation": "create",
+          "description": "Provide a friendly Access Denied screen for role-protected views/actions, per selected authorization component guidance. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/BootstrapAdminPage.tsx",
+          "operation": "create",
+          "description": "Add a small developer-facing UI to describe/admin-bootstrap flow (e.g., token-based init already handled by useActor) and provide an admin-only role assignment form calling assignCallerUserRole when permitted. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Extend/align frontend backend type declarations with any missing auth/user-management methods used by the UI (role checks, profile fields). Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Create a responsive UI shell with navigation and routes for Mess Menu, Email Summarizer, Travel Pool Cab, and Live Timetable.",
+      "acceptanceCriteria": [
+        "App is usable on common mobile widths (e.g., 360px) and desktop widths (>= 1024px) without broken layout.",
+        "Navigation is accessible on both mobile (collapsible) and desktop (persistent).",
+        "Each module has its own route/view with a clear title and empty-state messaging in English."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "create",
+          "description": "Create a responsive layout (header + collapsible mobile nav + desktop sidebar) with a consistent page header area and content container. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/ModuleNav.tsx",
+          "operation": "create",
+          "description": "Implement module navigation links/cards for the four modules with clear English labels and empty-state friendly descriptions. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/PageHeader.tsx",
+          "operation": "create",
+          "description": "Add a reusable page header (title + optional actions) used across all modules for consistent layout. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/router.tsx",
+          "operation": "create",
+          "description": "Add client-side routing for the four module views plus Settings/Profile and Privacy pages; include a default redirect to a module for authenticated users. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire AppShell + router; ensure unauthenticated users see a login screen and authenticated users can navigate to all modules. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/MessMenuPage.tsx",
+          "operation": "create",
+          "description": "Create the Live Mess Menu route/view with title and English empty-state messaging when no menu exists for selected date. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/EmailSummarizerPage.tsx",
+          "operation": "create",
+          "description": "Create the Email Summarizer route/view with title and English empty-state messaging for archive/search when empty. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TravelPoolPage.tsx",
+          "operation": "create",
+          "description": "Create the Travel Pool Cab route/view (list + filters + create form entry points) with title and empty-state messaging. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TimetablePage.tsx",
+          "operation": "create",
+          "description": "Create the Live Timetable route/view with title and English empty-state messaging for schedules/notices. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Implement Live Mess Menu UI: date switching, viewing upcoming menus, and admin-only create/edit controls.",
+      "acceptanceCriteria": [
+        "Backend supports CRUD for mess menus keyed by date.",
+        "Frontend shows today’s menu by default with ability to switch date.",
+        "Admins can add/edit a menu for a selected date from the UI; non-admins cannot see edit controls.",
+        "Menus persist across reloads."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/mess/useMessMenus.ts",
+          "operation": "create",
+          "description": "Add React Query hooks to load mess menus for a date range and mutate menus (create/update) with admin-only UI gating via current user role. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/mess/DatePickerStrip.tsx",
+          "operation": "create",
+          "description": "Implement a simple, mobile-friendly date selector to switch between today and upcoming days. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/mess/MessMenuCard.tsx",
+          "operation": "create",
+          "description": "Render meal sections (breakfast/lunch/snacks/dinner) with clear empty states when fields are missing. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/mess/MessMenuEditorDialog.tsx",
+          "operation": "create",
+          "description": "Admin-only add/edit dialog for a selected date’s menu; hide controls for non-admin users. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/MessMenuPage.tsx",
+          "operation": "modify",
+          "description": "Wire date switching, menu display, and admin edit/create actions; default to today and show upcoming navigation. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Add/extend type declarations for mess-menu data and backend capabilities used by the mess menu hooks (read/write keyed by date). Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Implement Email Summarizer UI with on-platform deterministic analysis, archive storage, search, spam marking, and deadline extraction display.",
+      "acceptanceCriteria": [
+        "User can paste an email and receive a computed summary, category, priority, sentiment, and any extracted deadlines.",
+        "Summaries are generated using deterministic heuristics / lightweight NLP implemented within the app (no third-party LLM/API).",
+        "Archive view lists saved summaries and supports full-text search over subject/body/summary.",
+        "Spam filtering marks an item as “likely spam” using simple rules (e.g., repeated promotions/keywords) and allows users to hide/show spam-marked items.",
+        "Deadline extraction detects at least common patterns (e.g., \"by 12 Feb\", \"Feb 12\", \"tomorrow\", \"5 PM\") and stores extracted values when found."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/emailNlp/heuristics.ts",
+          "operation": "create",
+          "description": "Implement deterministic, in-app heuristics for category labeling, priority scoring, sentiment labeling, spam scoring, and deadline extraction (common date/time patterns) without external AI calls. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/email/useEmailArchive.ts",
+          "operation": "create",
+          "description": "Add React Query hooks to save summarized items, list archive, search (full-text query), and toggle hide/show spam-marked items (UI-level filtering as needed). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/email/EmailPasteForm.tsx",
+          "operation": "create",
+          "description": "Create a form for subject/date(optional) + pasted body; on submit, compute heuristics locally and allow user to save to archive with consent text. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/email/SummaryResultCard.tsx",
+          "operation": "create",
+          "description": "Display computed summary, category, priority score, sentiment, extracted deadlines, and spam indicator with clear explanations. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/email/EmailArchiveList.tsx",
+          "operation": "create",
+          "description": "Render searchable archive list with a search input, hide/show spam toggle, and item details preview. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/EmailSummarizerPage.tsx",
+          "operation": "modify",
+          "description": "Wire paste form, computed results, save-to-archive, and archive/search UI into the module page with English empty states. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Add/extend type declarations for email archive items and backend capabilities used by the email archive hooks (save/list/search/mark spam/delete). Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Add user-managed interests and explainable relevance ranking for the email archive.",
+      "acceptanceCriteria": [
+        "User can manage a simple list of interest keywords in Settings/Profile.",
+        "Archive can be sorted by “Relevance” which boosts items containing interest keywords in subject/body/summary.",
+        "Relevance scoring is explainable in the UI (e.g., show matched keywords)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/SettingsPage.tsx",
+          "operation": "create",
+          "description": "Add a Settings/Profile page where users manage interest keywords/tags and save them to their profile. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/settings/InterestsEditor.tsx",
+          "operation": "create",
+          "description": "Implement add/remove interests UI with validation (English helper text) and save action tied to saveCallerUserProfile. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/emailNlp/relevance.ts",
+          "operation": "create",
+          "description": "Implement explainable relevance scoring based on interest keyword matches across subject/body/summary and return matched keywords for UI display. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/email/ArchiveSortControls.tsx",
+          "operation": "create",
+          "description": "Add sorting controls including “Relevance” and show a compact explanation of what matched when relevance sort is active. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/email/EmailArchiveList.tsx",
+          "operation": "modify",
+          "description": "Wire relevance sort + matched keyword chips/details for each item when applicable, using the user’s interests from profile. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Ensure UserProfile type includes interests and aligns with usage in Settings and archive ranking UI. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/router.tsx",
+          "operation": "modify",
+          "description": "Wire Settings/Profile route into navigation and ensure it’s accessible to authenticated users. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Implement Travel Pool Cab UI: create trips, browse/filter, join/request flows, and cost splitting calculator.",
+      "acceptanceCriteria": [
+        "Users can create a trip and see it listed for other users.",
+        "Users can filter trips by destination and date/time window and view departure times.",
+        "Users can request to join a trip; trip owner can accept/decline; seat counts update accordingly.",
+        "Cost split calculator returns per-person estimates given total cost and passenger count."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/travel/useTrips.ts",
+          "operation": "create",
+          "description": "Add React Query hooks around existing backend travel capabilities (list/filter/create/update/delete/join) and keep caches consistent after mutations. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/TripFilters.tsx",
+          "operation": "create",
+          "description": "Implement destination + time window filter controls (mobile-friendly) that drive queries and local filtering. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/TripCard.tsx",
+          "operation": "create",
+          "description": "Render trip summary (destination, pickup, departure, seats, notes, cost per seat) with join action and ownership-specific controls where applicable. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/TripFormDialog.tsx",
+          "operation": "create",
+          "description": "Create trip form (destination/pickup/departure/seats/notes/cost per seat) with validation and consent copy before saving. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/CostSplitCalculator.tsx",
+          "operation": "create",
+          "description": "Implement per-person cost estimator UI given total cost and passenger count (and optionally show comparison to cost-per-seat). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TravelPoolPage.tsx",
+          "operation": "modify",
+          "description": "Wire trip list, filters, create dialog, join action, and cost split calculator into the module page with English empty states. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Add Travel safety UI: emergency contacts, shareable trip details view, and safety report submission with admin review screen.",
+      "acceptanceCriteria": [
+        "User can add/edit emergency contact information in their profile (stored in backend).",
+        "Trip details page includes a section to view/share essential trip info (destination, time, participants list per privacy settings).",
+        "A user can submit a safety report against a trip; admins can view a list of reports."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/settings/EmergencyContactEditor.tsx",
+          "operation": "create",
+          "description": "Add emergency contact editor in Settings/Profile that saves to user profile; include privacy warning and consent text. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TravelTripDetailsPage.tsx",
+          "operation": "create",
+          "description": "Add a trip details view that includes a “Share trip details” section and a “Report issue” action; keep participant display privacy-conscious (avoid exposing emergency contacts). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/SafetyReportDialog.tsx",
+          "operation": "create",
+          "description": "Implement a dialog/form to submit a safety report tied to a trip with clear English guidance; handle backend authorization errors gracefully. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/AdminSafetyReportsPage.tsx",
+          "operation": "create",
+          "description": "Create an admin-only view that lists submitted safety reports for review (read-only list + details). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/travel/useSafetyReports.ts",
+          "operation": "create",
+          "description": "Add React Query hooks to submit and list safety reports, with admin-only enablement for the reports list. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/router.tsx",
+          "operation": "modify",
+          "description": "Wire Travel trip details route and admin safety reports route; protect admin route with role guard. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Add/extend type declarations for safety reports and related backend capabilities used by the travel safety UI. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Add post-trip participant ratings UI and show aggregate rating on user profiles used in Travel Sharing.",
+      "acceptanceCriteria": [
+        "After a trip’s departure time has passed, participants can submit a 1–5 rating (and optional comment).",
+        "User profile displays average rating and rating count.",
+        "Backend prevents rating by non-participants and prevents duplicate ratings for the same trip+reviewer+reviewee."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/travel/RatingsSection.tsx",
+          "operation": "create",
+          "description": "Add a ratings UI on trip details for eligible participants after departure time has passed; include rating (1–5) and optional comment. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/travel/useRatings.ts",
+          "operation": "create",
+          "description": "Add React Query hooks to load rating status and submit ratings; handle backend errors for duplicates/non-participants with clear UI messages. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/profile/UserRatingBadge.tsx",
+          "operation": "create",
+          "description": "Display average rating and rating count for a user where shown in travel context (e.g., trip creator card). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TravelTripDetailsPage.tsx",
+          "operation": "modify",
+          "description": "Wire ratings section into trip details and surface aggregate rating for trip creator (and optionally participants) without exposing sensitive profile fields. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Add/extend type declarations for ratings and any backend capabilities needed by the ratings UI (submit/list/aggregate). Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Add carbon footprint estimation UI for trips using in-app configurable emission factors.",
+      "acceptanceCriteria": [
+        "Trip form includes optional distance (km) and vehicle type.",
+        "UI displays estimated total CO₂ and per-passenger CO₂ when distance is provided.",
+        "Emission factors are documented and configurable in code (no external API dependency)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/travel/emissions.ts",
+          "operation": "create",
+          "description": "Define documented emission factors per vehicle type and provide functions to compute estimated total and per-passenger CO₂ in-app (no external APIs). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/CarbonEstimatePanel.tsx",
+          "operation": "create",
+          "description": "Display CO₂ estimates (total and per passenger) whenever distance and passenger count are available; include a brief English note about approximation. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/TripFormDialog.tsx",
+          "operation": "modify",
+          "description": "Add optional distance (km) and vehicle type controls; show live carbon estimate preview using in-app factors. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/TripCard.tsx",
+          "operation": "modify",
+          "description": "Show a compact CO₂ estimate summary on trip cards when distance is provided. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Implement polling-based refresh for trip lists and statuses using React Query intervals with visibility/metered controls.",
+      "acceptanceCriteria": [
+        "Trips list refreshes automatically on an interval (e.g., every 15–30 seconds) without user action.",
+        "Polling can be disabled/reduced when the tab is not visible or user is on metered mode (basic toggle is acceptable)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/usePollingPreferences.ts",
+          "operation": "create",
+          "description": "Implement a small preference hook for polling interval and a user toggle for reduced polling (metered mode) stored in localStorage. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/usePageVisibility.ts",
+          "operation": "create",
+          "description": "Add a hook to detect tab visibility and allow queries to reduce/disable polling when the page is not visible. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/travel/useTrips.ts",
+          "operation": "modify",
+          "description": "Enable React Query polling for trips (e.g., 15–30s) and adjust/disable interval based on visibility and metered toggle; ensure it doesn’t spam requests when hidden. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/PollingControls.tsx",
+          "operation": "create",
+          "description": "Add a simple UI control on the Travel page to toggle reduced polling (metered mode) and show current refresh behavior. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TravelPoolPage.tsx",
+          "operation": "modify",
+          "description": "Wire polling controls into the Travel page and ensure list refreshes without user action. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Implement Live Timetable UI for personal schedules with admin-published update notices surfaced to affected users.",
+      "acceptanceCriteria": [
+        "User can create/edit/delete timetable entries in their personal schedule.",
+        "Admin can create an “update notice” (cancellation/room change) linked to a course/identifier and time window.",
+        "User timetable view surfaces relevant active notices prominently.",
+        "Data persists across reloads."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/timetable/useTimetable.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for user timetable entries (create/edit/delete/list) and to load active update notices relevant to the current user’s schedule. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/TimetableGrid.tsx",
+          "operation": "create",
+          "description": "Create a mobile-friendly timetable display (day/time blocks) with a clear empty state when no entries exist. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/EntryEditorDialog.tsx",
+          "operation": "create",
+          "description": "Implement create/edit/delete UI for timetable entries (course/event, day/time, room, professor) with validation. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/NoticesBanner.tsx",
+          "operation": "create",
+          "description": "Display active admin notices prominently (cancellation/room change) and link them to affected entries by identifier. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/AdminNoticesPage.tsx",
+          "operation": "create",
+          "description": "Add an admin-only page for creating and listing update notices; protect it with role guard. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TimetablePage.tsx",
+          "operation": "modify",
+          "description": "Wire timetable grid, entry editor, and notices banner; ensure persistence via backend-backed hooks and show English empty states. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/router.tsx",
+          "operation": "modify",
+          "description": "Wire admin notices route and protect it with admin-only guard. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Add/extend type declarations for timetable entries, notices, and related backend capabilities used by timetable hooks and admin notices UI. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Add timetable helper features: semesters, exams/countdowns, free-period finder, conflict detection, in-app reminders, and ICS export.",
+      "acceptanceCriteria": [
+        "User can assign timetable entries to a semester and switch between semesters.",
+        "User can add exams with date/time and see countdowns.",
+        "Free-period finder identifies open slots for a selected day/week based on current schedule.",
+        "Conflict detection warns on overlapping entries when creating/editing entries.",
+        "User can export a semester schedule to an ICS file from the UI.",
+        "Smart reminders can be configured (e.g., 10/30 minutes before) and are shown in-app (no push notifications)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/timetable/conflicts.ts",
+          "operation": "create",
+          "description": "Implement conflict detection utilities for overlapping entries and return user-friendly conflict summaries. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/timetable/freePeriods.ts",
+          "operation": "create",
+          "description": "Implement free-period finder utilities for a selected day/week based on current schedule. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/timetable/ics.ts",
+          "operation": "create",
+          "description": "Implement ICS generation and download helper for exporting a semester schedule from the UI (client-side file download). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/SemesterSwitcher.tsx",
+          "operation": "create",
+          "description": "Add semester selection UI and wire it to filter timetable entries/exams/reminders by semester. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/ExamCountdowns.tsx",
+          "operation": "create",
+          "description": "Add exams list and countdown display per semester with clear English empty state when no exams exist. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/FreePeriodFinderPanel.tsx",
+          "operation": "create",
+          "description": "Add a panel to select a day/week view and show computed free slots. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/ReminderSettings.tsx",
+          "operation": "create",
+          "description": "Add UI to configure smart reminders (e.g., 10/30 minutes) and show upcoming reminders in-app (no push). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/EntryEditorDialog.tsx",
+          "operation": "modify",
+          "description": "Add conflict warnings during create/edit using conflict utilities; allow semester assignment. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TimetablePage.tsx",
+          "operation": "modify",
+          "description": "Wire semester switching, exam countdowns, free-period finder, reminders, and ICS export action into the timetable module. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Add/extend type declarations for semesters, exams, reminders, and any backend capabilities used to persist these features. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Add optional office hours and manual classroom occupancy status UI with role-controlled write access and last-updated display.",
+      "acceptanceCriteria": [
+        "Timetable entries optionally store office hours information and display it in the UI.",
+        "Room occupancy can be manually updated and shows last updated time.",
+        "Non-admin users can view occupancy status; write access is role-controlled (define who can update)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/timetable/OfficeHoursField.tsx",
+          "operation": "create",
+          "description": "Add optional office hours input/display component for timetable entries (manual text or structured blocks). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/RoomOccupancyPanel.tsx",
+          "operation": "create",
+          "description": "Implement room occupancy display with last-updated timestamp and role-gated update controls (admin-only by default unless specified otherwise). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/timetable/useRoomOccupancy.ts",
+          "operation": "create",
+          "description": "Add React Query hooks to read occupancy status and (when authorized) update occupancy; handle authorization errors with clear UI messages. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/timetable/EntryEditorDialog.tsx",
+          "operation": "modify",
+          "description": "Include office hours field in entry create/edit and show it on entry detail views. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TimetablePage.tsx",
+          "operation": "modify",
+          "description": "Wire room occupancy panel into the timetable module and ensure non-admins can view while write actions are role-gated. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Add/extend type declarations for office hours and room occupancy backend capabilities needed by the UI. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Add developer-facing documentation file(s) describing backend canister methods and authorization rules, with examples by module.",
+      "acceptanceCriteria": [
+        "Documentation lists all public canister methods grouped by feature area (auth/users, mess menu, email archive, travel, timetable).",
+        "Each method includes: purpose, params, return type/shape, and who is allowed to call it (Student/Admin).",
+        "Docs include at least one example for creating and reading data for each module."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/docs/backend-api.md",
+          "operation": "create",
+          "description": "Create developer-facing documentation for backend canister methods, grouped by module, including role/authorization rules and example request/response shapes; keep method naming aligned with frontend backend.d.ts declarations. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Ensure declared backend interface/types align with the documentation and the UI’s expected capabilities across modules. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "Add privacy/responsible data handling UI, user consent text, delete-my-data controls, and an admin audit log view (frontend).",
+      "acceptanceCriteria": [
+        "App includes a short Privacy/Responsible Data Handling page in English describing what is stored and why.",
+        "Users can delete their own stored content (email archive items, timetable entries, trips they own where applicable) and request deletion of their profile data where safe.",
+        "Backend stores only necessary fields; sensitive fields (e.g., emergency contacts) are not publicly readable by default.",
+        "Admin actions that modify shared data (mess menu, notices, reports) are recorded in a simple audit log viewable by admins."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PrivacyPage.tsx",
+          "operation": "create",
+          "description": "Add an English Privacy/Responsible Data Handling page describing what data is stored (emails, trips, timetable, profile) and why, including retention and deletion notes. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/settings/DeleteMyDataPanel.tsx",
+          "operation": "create",
+          "description": "Add UI to delete user-owned content (email items, timetable entries, owned trips) and request profile deletion where supported; include confirmations and clear English warnings. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/SettingsPage.tsx",
+          "operation": "modify",
+          "description": "Wire delete-my-data panel and ensure consent copy is present where user content is stored (email save, trip create, etc.). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/AdminAuditLogPage.tsx",
+          "operation": "create",
+          "description": "Create an admin-only audit log view (read-only list) for admin actions affecting shared data; protect with role guard. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/admin/useAuditLog.ts",
+          "operation": "create",
+          "description": "Add React Query hooks to fetch audit log entries for admins and handle authorization errors gracefully. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/router.tsx",
+          "operation": "modify",
+          "description": "Wire Privacy page and Admin Audit Log page routes; protect admin route with role guard and ensure Privacy is reachable from navigation. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Add/extend type declarations for delete-my-data and audit log backend capabilities used by the UI. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/email/EmailPasteForm.tsx",
+          "operation": "modify",
+          "description": "Include clear consent text before saving pasted email content to the archive and link to the Privacy page. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/travel/TripFormDialog.tsx",
+          "operation": "modify",
+          "description": "Include clear consent text before saving trip details and link to the Privacy page. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "summary": "Apply a consistent campus-utility visual theme (non blue/purple default) with accessible typography, spacing, and shared layout patterns.",
+      "acceptanceCriteria": [
+        "A defined palette and typography scale is applied consistently across navigation, headers, cards, and forms.",
+        "All four modules share a consistent layout system (page header + content sections).",
+        "Theme remains accessible with sufficient contrast for text and interactive elements."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/index.css",
+          "operation": "modify",
+          "description": "Adjust CSS variables for a distinctive, coherent palette (avoid blue/purple default), typography rhythm, and accessible contrast; keep applied across app via Tailwind tokens. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Refine Tailwind theme tokens (e.g., container, typography plugin usage) to match the campus theme and ensure consistent spacing/typography scale. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Ensure navigation, header, and content sections consistently use the theme tokens and layout pattern across all modules. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/PageHeader.tsx",
+          "operation": "modify",
+          "description": "Apply consistent header styling (title, subtitle, actions) using theme tokens across pages. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "summary": "Wire generated static assets (logo + module icons) into header and module navigation.",
+      "acceptanceCriteria": [
+        "Generated images exist under frontend/public/assets/generated and are referenced directly by the frontend (no backend image serving).",
+        "App header shows the logo.",
+        "Navigation/cards for the four modules display their icons."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Render the app logo in the header using frontend/public/assets/generated/app-logo.dim_512x512.png and ensure it displays well on mobile/desktop. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/ModuleNav.tsx",
+          "operation": "modify",
+          "description": "Show module icons in navigation/cards using: frontend/public/assets/generated/icon-mess.dim_256x256.png, frontend/public/assets/generated/icon-mail.dim_256x256.png, frontend/public/assets/generated/icon-carpool.dim_256x256.png, frontend/public/assets/generated/icon-timetable.dim_256x256.png. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/MessMenuPage.tsx",
+          "operation": "modify",
+          "description": "Use the mess icon (frontend/public/assets/generated/icon-mess.dim_256x256.png) in the page header/empty state where appropriate. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/EmailSummarizerPage.tsx",
+          "operation": "modify",
+          "description": "Use the email icon (frontend/public/assets/generated/icon-mail.dim_256x256.png) in the page header/empty state where appropriate. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TravelPoolPage.tsx",
+          "operation": "modify",
+          "description": "Use the carpool icon (frontend/public/assets/generated/icon-carpool.dim_256x256.png) in the page header/empty state where appropriate. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TimetablePage.tsx",
+          "operation": "modify",
+          "description": "Use the timetable icon (frontend/public/assets/generated/icon-timetable.dim_256x256.png) in the page header/empty state where appropriate. Verify the component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}
